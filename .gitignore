@@ -205,3 +205,8 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+
+# pruebas locales
+test_local.py
+data/data_jobs.csv
