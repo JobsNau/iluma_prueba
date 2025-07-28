@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import SQLAlchemyError
-from src.config import Settings
+from config import Settings
 from src.utils.logger import get_logger
 logger = get_logger(__name__)
 
