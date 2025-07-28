@@ -57,15 +57,6 @@ CREATE TABLE report.job_skills (
     PRIMARY KEY (job_id, skill_id)
 );
 ```
-
-#### ✅ Cumplimiento de la 3FN
-
-| Forma Normal | Cumplimiento |
-|--------------|--------------|
-| **1FN**: campos atómicos           | ✔️ Todas las columnas contienen datos simples, sin listas ni diccionarios anidados |
-| **2FN**: dependencias completas    | ✔️ Todas las columnas dependen por completo de su clave primaria |
-| **3FN**: sin dependencias transitivas | ✔️ No existen atributos que dependan indirectamente de la clave primaria |
-
 ---
 
 
@@ -80,6 +71,13 @@ CREATE TABLE report.job_skills (
 | **Logging**            | Registro profesional de errores, ejecuciones y trazabilidad del pipeline.    |
 
 ---
+
+### 🔹 Consideraciones Generales
+* Antes de ejecutar `main.py`, verifica que el archivo `data_jobs.csv` se encuentre en la ruta `./data/data_jobs.csv` (relativa al root del proyecto) y que esté en formato CSV estándar (delimitado por comas, codificación UTF-8).
+* La forma de cargar la información proveniente de `data_jobs.csv` se hace por medio de `copyexport` a la base de datos, esto se realiza por rapidez.
+* Antes de subir la información a la base de datos, se realiza una validación con Pandera para garantizar la integridad de los datos y evitar cargar datos sucios.
+* Además, se configuran las columnas `job_skills` garantizando que sean de tipo `list` y `job_type_skills` garantizando que sean de tipo `dict`.
+
 
 ##  2. Instrucciones de Ejecución
 
