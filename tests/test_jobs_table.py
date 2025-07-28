@@ -1,3 +1,5 @@
+from datetime import datetime
+
 def test_jobs_not_empty(conn):
     cur = conn.cursor()
     cur.execute("SELECT COUNT(*) FROM report.jobs;")
@@ -22,3 +24,15 @@ def test_required_fields_not_null(conn):
     """)
     count = cur.fetchone()[0]
     assert count == 0, "Hay trabajos con campos críticos nulos"
+
+
+def test_posted_date_not_in_future(conn):
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT COUNT(*)
+        FROM report.jobs
+        WHERE posted_date > NOW();
+    """)
+    count = cur.fetchone()[0]
+    assert count == 0, f"{count} trabajos tienen fecha de publicación en el futuro"
+
