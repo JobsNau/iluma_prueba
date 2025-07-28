@@ -160,6 +160,40 @@ pytest -v \test
 
 ---
 
+## 4. DAG de Airflow
+
+A continuación se muestra un ejemplo sencillo de un DAG de Apache Airflow para orquestar el pipeline de ingeniería de datos. Este DAG está etiquetado como `desarrollo`, se ejecuta todos los días a las 5:00 AM y realiza tareas básicas de ejemplo.
+
+```python
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+from datetime import datetime, timedelta
+
+default_args = {
+    'owner': 'airflow',
+    'retries': 1,
+    'retry_delay': timedelta(minutes=5),
+}
+
+with DAG(
+    dag_id='iluma_pipeline_dag',
+    default_args=default_args,
+    description='DAG de desarrollo para pipeline de ingeniería de datos',
+    schedule_interval='0 5 * * *',
+    start_date=datetime(2024, 1, 1),
+    catchup=False,
+    tags=['desarrollo'],
+    ) as dag:
+
+
+    ejecutar_pipeline = BashOperator(
+        task_id='ejecutar_pipeline',
+        bash_command='python /usr/local/airflow/dags/main.py'
+    )
+```
+---
+
+
 ## Autor
 
 **Jobany Nausa Cáceres**  
