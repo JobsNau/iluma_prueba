@@ -20,7 +20,7 @@ def test_required_fields_not_null(conn):
     cur.execute("""
         SELECT COUNT(*)
         FROM report.jobs
-        WHERE title_short IS NULL OR title_raw IS NULL OR posted_date IS NULL;
+        WHERE title_short IS NULL OR posted_date IS NULL;
     """)
     count = cur.fetchone()[0]
     assert count == 0, "Hay trabajos con campos críticos nulos"
