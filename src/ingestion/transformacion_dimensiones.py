@@ -281,6 +281,7 @@ def transform_and_load_job_skills(engine):
         df_rws["job_skills"] = df_rws["job_skills"].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
         df_rws = df_rws.explode("job_skills").dropna(subset=["job_skills"])
         df_rws["skill_id"] = df_rws["job_skills"].str.lower().map(skill_map)
+        df_rws = df_rws.drop_duplicates(subset=["job_id", "skill_id"])
 
         data_to_save = df_rws[["job_id", "skill_id"]].dropna().values.tolist()
 
