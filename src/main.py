@@ -10,11 +10,14 @@ from src.ingestion.transformacion_dimensiones import transform_and_load_salary_r
 from src.ingestion.transformacion_dimensiones import transform_and_load_skills
 from src.ingestion.transformacion_dimensiones import transform_and_load_jobs
 from src.ingestion.transformacion_dimensiones import transform_and_load_job_skills
+from src.utils.logger import get_logger
+logger = get_logger(__name__)
 
 
 def main():
     
     try:
+        logger.info("Iniciando proceso de carga de datos.")
         db = Database()
         engine = db.connect()
         

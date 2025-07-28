@@ -1,4 +1,6 @@
 from sqlalchemy import text
+from src.utils.logger import get_logger
+logger = get_logger(__name__)
 
 def cargar_csv_directo(engine, csv_path, schema="carga", table="data_jobs"):
     # Crear tabla si no existe
@@ -52,10 +54,10 @@ def cargar_csv_directo(engine, csv_path, schema="carga", table="data_jobs"):
         with open(csv_path, 'r', encoding='utf-8') as f:
             cursor.copy_expert(sql, f)
         conn.commit()
-        print(f"Carga completada desde {csv_path} a {schema}.{table}")
+        logger.info("Carga completada desde %s a %s.%s", csv_path, schema, table)
     except Exception as e:
         conn.rollback()
-        print("Error al insertar:", e)
+        logger.error("Error al insertar: %s", e)
         raise
     finally:
         cursor.close()

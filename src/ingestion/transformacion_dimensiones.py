@@ -1,6 +1,8 @@
 import json
 import ast
 import pandas as pd
+from src.utils.logger import get_logger
+logger = get_logger(__name__)
 
 def transform_and_load_companies(engine):
     query_select = """
@@ -20,17 +22,17 @@ def transform_and_load_companies(engine):
     try:
         cursor.execute(query_select)
         companies = cursor.fetchall()
-        print(f"Se encontraron {len(companies)} compañías únicas.")
+        logger.info("Se encontraron %d compañías únicas.", len(companies))
 
         values_to_insert = [(company[0],) for company in companies if company[0] is not None]
         if values_to_insert:
             cursor.executemany(insert_query, values_to_insert)
 
         conn.commit()
-        print("Carga a report.companies completada.")
+        logger.info("Carga a report.companies completada.")
     except Exception as e:
         conn.rollback()
-        print(f"Error al cargar compañías: {e}")
+        logger.error("Error al cargar compañías: %s", e)
     finally:
         cursor.close()
         conn.close()
@@ -54,17 +56,17 @@ def transform_and_load_locations(engine):
     try:
         cur.execute(query_select)
         locations = cur.fetchall()
-        print(f"Se encontraron {len(locations)} ubicaciones únicas.")
+        logger.info("Se encontraron %d ubicaciones únicas.", len(locations))
 
         values_to_insert = [(location[0],) for location in locations if location[0] is not None]
         if values_to_insert:
             cur.executemany(insert_query, values_to_insert)
 
         conn.commit()
-        print("Carga a report.locations completada.")
+        logger.info("Carga a report.locations completada.")
     except Exception as e:
         conn.rollback()
-        print(f"Error al cargar ubicaciones: {e}")
+        logger.error("Error al cargar ubicaciones: %s", e)
     finally:
         cur.close()
         conn.close()
@@ -88,17 +90,17 @@ def transform_and_load_schedules(engine):
     try:
         cur.execute(query_select)
         schedules = cur.fetchall()
-        print(f"Se encontraron {len(schedules)} tipos de jornada únicos.")
+        logger.info("Se encontraron %d tipos de jornada únicos.", len(schedules))
 
         values_to_insert = [(schedule[0],) for schedule in schedules if schedule[0] is not None]
         if values_to_insert:
             cur.executemany(insert_query, values_to_insert)
 
         conn.commit()
-        print("Carga a report.schedules completada.")
+        logger.info("Carga a report.schedules completada.")
     except Exception as e:
         conn.rollback()
-        print(f"Error al cargar tipos de jornada: {e}")
+        logger.error("Error al cargar tipos de jornada: %s", e)
     finally:
         cur.close()
         conn.close()
@@ -122,17 +124,17 @@ def transform_and_load_sources(engine):
     try:
         cur.execute(query_select)
         sources = cur.fetchall()
-        print(f"Se encontraron {len(sources)} fuentes únicas.")
+        logger.info("Se encontraron %d fuentes únicas.", len(sources))
 
         values_to_insert = [(source[0],) for source in sources if source[0] is not None]
         if values_to_insert:
             cur.executemany(insert_query, values_to_insert)
 
         conn.commit()
-        print("Carga a report.sources completada.")
+        logger.info("Carga a report.sources completada.")
     except Exception as e:
         conn.rollback()
-        print(f"Error al cargar fuentes: {e}")
+        logger.error("Error al cargar fuentes: %s", e)
     finally:
         cur.close()
         conn.close()
@@ -156,17 +158,17 @@ def transform_and_load_countries(engine):
     try:
         cur.execute(query_select)
         countries = cur.fetchall()
-        print(f"Se encontraron {len(countries)} países únicos.")
+        logger.info("Se encontraron %d países únicos.", len(countries))
 
         values_to_insert = [(country[0],) for country in countries if country[0] is not None]
         if values_to_insert:
             cur.executemany(insert_query, values_to_insert)
 
         conn.commit()
-        print("Carga a report.countries completada.")
+        logger.info("Carga a report.countries completada.")
     except Exception as e:
         conn.rollback()
-        print(f"Error al cargar países: {e}")
+        logger.error("Error al cargar países: %s", e)
     finally:
         cur.close()
         conn.close()
@@ -190,17 +192,17 @@ def transform_and_load_salary_rates(engine):
     try:
         cur.execute(query_select)
         rates = cur.fetchall()
-        print(f"Se encontraron {len(rates)} tipos de salario únicos.")
+        logger.info("Se encontraron %d tipos de salario únicos.", len(rates))
 
         values_to_insert = [(rate[0],) for rate in rates if rate[0] is not None]
         if values_to_insert:
             cur.executemany(insert_query, values_to_insert)
 
         conn.commit()
-        print("Carga a report.salary_rates completada.")
+        logger.info("Carga a report.salary_rates completada.")
     except Exception as e:
         conn.rollback()
-        print(f"Error al cargar tipos de salario: {e}")
+        logger.error("Error al cargar tipos de salario: %s", e)
     finally:
         cur.close()
         conn.close()
@@ -231,19 +233,19 @@ def transform_and_load_skills(engine):
                 if isinstance(skills_json, list):
                     unique_skills.update([s.strip() for s in skills_json if s.strip()])
             except Exception as e:
-                print(f"Error al parsear skills: {e}")
+                logger.error("Error al parsear skills: %s", e)
 
-        print(f"Se encontraron {len(unique_skills)} habilidades únicas.")
+        logger.info("Se encontraron %d habilidades únicas.", len(unique_skills))
 
         values_to_insert = [(skill,) for skill in unique_skills if skill]
         if values_to_insert:
             cur.executemany(insert_query, values_to_insert)
 
         conn.commit()
-        print("Carga a report.skills completada.")
+        logger.info("Carga a report.skills completada.")
     except Exception as e:
         conn.rollback()
-        print(f"Error al cargar habilidades: {e}")
+        logger.error("Error al cargar habilidades: %s", e)
     finally:
         cur.close()
         conn.close()
@@ -274,7 +276,7 @@ def transform_and_load_job_skills(engine):
             ON CONFLICT DO NOTHING
         """
         rows = cur.fetchall()
-        print(f"Procesando {len(rows)} trabajos con habilidades...")
+        logger.info("Procesando %d trabajos con habilidades...", len(rows))
         df_rws = pd.DataFrame(rows, columns=["job_skills", "job_id"])
         df_rws["job_skills"] = df_rws["job_skills"].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
         df_rws = df_rws.explode("job_skills").dropna(subset=["job_skills"])
@@ -286,10 +288,10 @@ def transform_and_load_job_skills(engine):
             cur.executemany(insert_query, data_to_save)
 
         conn.commit()
-        print("Carga a report.job_skills completada.")
+        logger.info("Carga a report.job_skills completada.")
     except Exception as e:
         conn.rollback()
-        print(f"Error al cargar job_skills: {e}")
+        logger.error("Error al cargar job_skills: %s", e)
     finally:
         cur.close()
         conn.close()
@@ -322,6 +324,7 @@ def transform_and_load_jobs(engine):
             FROM carga.data_jobs;
         """)
         rows = cur.fetchall()
+        logger.info("Procesando %d trabajos...", len(rows))
 
         insert_query = """
             INSERT INTO report.jobs (
@@ -370,10 +373,10 @@ def transform_and_load_jobs(engine):
             cur.executemany(insert_query, data_to_insert)
 
         conn.commit()
-        print("Carga a report.jobs completada.")
+        logger.info("Carga a report.jobs completada.")
     except Exception as e:
         conn.rollback()
-        print(f"Error al cargar jobs: {e}")
+        logger.error("Error al cargar jobs: %s", e)
     finally:
         cur.close()
         conn.close()
