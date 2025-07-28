@@ -96,7 +96,7 @@ git clone https://github.com/JobsNau/iluma_prueba.git
 cd iluma_prueba
 ```
 
-2. Crear un archivo `.env` en la carpeta `docker/` con el siguiente contenido:
+2. Crear un archivo `.env` en la ruta `./docker/.env` con el siguiente contenido:
 
 ```env
 POSTGRES_USER=postgres_user
