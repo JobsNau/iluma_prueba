@@ -1,5 +1,6 @@
 import json
 import ast
+import pandas as pd
 
 def transform_and_load_companies(engine):
     query_select = """
@@ -257,48 +258,29 @@ def transform_and_load_job_skills(engine):
         cur.execute("SELECT id, name FROM report.skills")
         skill_map = {name.lower(): id for id, name in cur.fetchall()}
 
-        # Obtener los trabajos con skills y su id original
+        # Obtener los trabajos con skills y su job_id
         cur.execute("""
-            SELECT id, job_skills
-            FROM carga.data_jobs
-            WHERE job_skills IS NOT NULL
+            SELECT 
+                job_skills
+                , jobs.id AS job_id
+            FROM carga.data_jobs AS data_jobs
+            LEFT JOIN report.jobs AS jobs ON data_jobs.id = jobs.job_row_id
+            WHERE data_jobs.job_skills IS NOT NULL
         """)
-        rows = cur.fetchall()
-
-        print(f"Procesando {len(rows)} trabajos con habilidades...")
-
+        
         insert_query = """
             INSERT INTO report.job_skills (job_id, skill_id)
             VALUES (%s, %s)
             ON CONFLICT DO NOTHING
         """
-        data_to_save = []
-        for carga_job_id, skills_field in rows:
-            # Obtener job_id normalizado en report.jobs
-            cur.execute("SELECT id FROM report.jobs WHERE job_row_id = %s", (carga_job_id,))
-            result = cur.fetchone()
-            if not result:
-                continue  # aún no cargado o no mapeado
-            job_id = result[0]
+        rows = cur.fetchall()
+        print(f"Procesando {len(rows)} trabajos con habilidades...")
+        df_rws = pd.DataFrame(rows, columns=["job_skills", "job_id"])
+        df_rws["job_skills"] = df_rws["job_skills"].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
+        df_rws = df_rws.explode("job_skills").dropna(subset=["job_skills"])
+        df_rws["skill_id"] = df_rws["job_skills"].str.lower().map(skill_map)
 
-            # Interpretar campo de skills
-            if isinstance(skills_field, list):
-                skills = skills_field
-            elif isinstance(skills_field, str):
-                try:
-                    skills = ast.literal_eval(skills_field)
-                except Exception:
-                    continue
-            else:
-                continue
-            
-            data_to_insert = []
-            for skill_name in skills:
-                skill_id = skill_map.get(skill_name.lower())
-                if skill_id:
-                    data_to_insert.append((job_id, skill_id))
-            
-            data_to_save.extend(data_to_insert)
+        data_to_save = df_rws[["job_id", "skill_id"]].dropna().values.tolist()
 
         if data_to_save:
             cur.executemany(insert_query, data_to_save)

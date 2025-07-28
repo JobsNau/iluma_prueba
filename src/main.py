@@ -15,12 +15,12 @@ from src.ingestion.transformacion_dimensiones import transform_and_load_job_skil
 def main():
     
     try:
+        db = Database()
+        engine = db.connect()
+        
         raw_csv = "data/data_jobs.csv"
         clean_csv_path = "data/data_jobs_clean.csv"
         clean_csv(raw_csv, clean_csv_path)
-
-        db = Database()
-        engine = db.connect()
         cargar_csv_directo(engine, clean_csv_path)
 
         # Transformar y cargar dimensiones

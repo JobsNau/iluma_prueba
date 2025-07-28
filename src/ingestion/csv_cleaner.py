@@ -15,7 +15,7 @@ def parse_skills(val):
 
 def clean_csv(input_path: str, output_path: str):
     df = pd.read_csv(input_path)
-    df=df.head(10000)  # Limitar a las primeras 10000 filas
+    df=df.head(100000)
 
     df["job_skills"] = df["job_skills"].apply(parse_skills)
     df["job_type_skills"] = df["job_type_skills"].apply(parse_skills)

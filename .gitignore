@@ -210,4 +210,4 @@ __marimo__/
 # pruebas locales
 test_local.py
 data/data_jobs.csv
-data/data_jobs_cleaned.csv
+data/data_jobs_clean.csv
