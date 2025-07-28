@@ -3,8 +3,10 @@ import psycopg2
 import os
 from dotenv import load_dotenv
 load_dotenv(dotenv_path="docker/.env")
-from src.utils.logger import get_logger
-logger = get_logger(__name__)
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
 @pytest.fixture(scope="module")
