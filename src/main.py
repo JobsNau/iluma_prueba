@@ -39,6 +39,7 @@ def main():
 
     finally:
         db.disconnect()
+        logger.info("Proceso de carga de datos finalizado.")
 
 if __name__ == "__main__":
     main()
