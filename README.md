@@ -57,6 +57,11 @@ CREATE TABLE report.job_skills (
     PRIMARY KEY (job_id, skill_id)
 );
 ```
+#### Diagrama Entidad-Relacion
+
+![Diagrama ERD](der.png)
+
+
 ---
 
 
