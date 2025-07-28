@@ -12,3 +12,13 @@ def test_job_row_id_unique(conn):
     """)
     duplicates = cur.fetchone()[0]
     assert duplicates == 0, "Existen job_row_id duplicados"
+
+def test_required_fields_not_null(conn):
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT COUNT(*)
+        FROM report.jobs
+        WHERE title_short IS NULL OR title_raw IS NULL OR posted_date IS NULL;
+    """)
+    count = cur.fetchone()[0]
+    assert count == 0, "Hay trabajos con campos críticos nulos"
