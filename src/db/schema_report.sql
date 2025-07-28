@@ -54,8 +54,9 @@ CREATE TABLE report.jobs (
     source_id INT REFERENCES report.sources(id),
     country_id INT REFERENCES report.countries(id),
     salary_rate_id INT REFERENCES report.salary_rates(id)
+    job_row_id INT UNIQUE
 );
-ALTER TABLE report.jobs ADD COLUMN job_row_id INT UNIQUE;
+-- ALTER TABLE report.jobs ADD COLUMN job_row_id INT UNIQUE;
 
 -- Relación muchos a muchos: jobs - skills
 CREATE TABLE report.job_skills (
