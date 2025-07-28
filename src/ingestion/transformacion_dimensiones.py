@@ -272,7 +272,7 @@ def transform_and_load_job_skills(engine):
             VALUES (%s, %s)
             ON CONFLICT DO NOTHING
         """
-
+        data_to_save = []
         for carga_job_id, skills_field in rows:
             # Obtener job_id normalizado en report.jobs
             cur.execute("SELECT id FROM report.jobs WHERE job_row_id = %s", (carga_job_id,))
@@ -291,11 +291,17 @@ def transform_and_load_job_skills(engine):
                     continue
             else:
                 continue
-
+            
+            data_to_insert = []
             for skill_name in skills:
                 skill_id = skill_map.get(skill_name.lower())
                 if skill_id:
-                    cur.execute(insert_query, (job_id, skill_id))
+                    data_to_insert.append((job_id, skill_id))
+            
+            data_to_save.extend(data_to_insert)
+
+        if data_to_save:
+            cur.executemany(insert_query, data_to_save)
 
         conn.commit()
         print("Carga a report.job_skills completada.")
