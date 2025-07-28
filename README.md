@@ -147,7 +147,7 @@ Las pruebas verifican:
 ### 🔸 Ejecución Manual de Pruebas
 
 ```bash
-pytest -v \test
+pytest -v tests/  
 ```
 
 ### 🔸 Estructura de Pruebas
